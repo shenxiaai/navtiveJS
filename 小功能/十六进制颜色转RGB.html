@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  	<meta name="apple-mobile-web-app-capable" content="yes">
+  	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+  	<meta name="format-detection" content="telephone=no">
+	<title>十六进制颜色转RGB</title>
+	<link rel="stylesheet" type="text/css" href="common.css">
+	<style type="text/css">
+		html,body{margin: 0;padding: 0;font-size: 20px;}
+		h3,h4,h5{margin-left: .1rem;padding-left: .2rem;border-left: 5px solid #888;}
+		h3{line-height: 1.5rem;}
+		.red{color: red!important;font-size: 1.1rem;line-height: 1.2rem;}
+		.blue{color: blue;}
+		.code{margin-bottom: .5rem;padding: .5rem;font-size: 1.1rem;border-bottom: 1px solid #eee;box-sizing: border-box;}
+		.code p{line-height: 1.1rem;color: #888;}
+		.ind2{text-indent: 2em;}
+		.ind4{text-indent: 4em;}
+		.ind6{text-indent: 6em;}
+		.ind8{text-indent: 8em;}
+		.bold{font-weight: bold;}
+
+		arrow{display: inline-block;padding: 0 .4rem;font-weight: bolder;color: blue;}
+		.notes{color: darkmagenta;text-indent: 2em;font-size: .6rem;font-weight: bold;}
+		.notes:before{content: "//";}
+	</style>
+</head>
+<body>
+	<h1 class="tac">十六进制颜色转RGB</h1>
+	<div class="form">
+		<input type="text" id="colorIpt" placeholder="请输入十六进制颜色编码">
+		<button id="turnBtn">转换成RGB格式</button>
+		<br>
+		<br>
+		<label>结果：<em id="result"></em></label>
+	</div>
+
+	<script>
+		function turnToRGB(colorNo) {
+			var arr = [],
+				rgb;
+			colorNo = colorNo.split('#')[1];
+			if(colorNo.length == 6){
+				for(var i = 0; i < 6; i++){
+					arr.push(colorNo.substr(i, 2));
+					i++;
+				}
+				turnTo10(arr);
+			}else if(colorNo.length == 3){
+				for(var i = 0; i < 3; i++){
+					var val = colorNo.substr(i, 1) + colorNo.substr(i, 1);
+					arr.push(val);
+				}
+				turnTo10(arr);
+			}else{
+				alert('不是正确的十六进制颜色编码！');
+			}
+
+			function turnTo10(array) {
+				for(var j = 0; j < array.length; j++){
+					array[j] = parseInt(array[j], 16);
+				}
+			}
+
+			rgb = 'RGB(' + arr[0] + ', ' + arr[1] + ', ' + arr[2] + ')';
+			return rgb;
+		}
+
+		var colorIpt = document.getElementById('colorIpt'),
+			turnBtn = document.getElementById('turnBtn'),
+			result = document.getElementById('result');
+
+		turnBtn.onclick = function () {
+			result.innerHTML = turnToRGB(colorIpt.value);
+		}
+	</script>
+</body>
+</html>
