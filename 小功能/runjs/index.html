@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<title>runJS</title>
+	<link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="./css/codemirror.min.css">
+	<link rel="stylesheet" type="text/css" href="./css/style.css">
+	<script src="./js/codemirror.min.js"></script>
+	<script src="./js/codeMirror-javascript.min.js"></script>
+	<script src="./js/htmlmixed.min.js"></script>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<form class="form-inline">
+							<div class="row">
+								<div class="col-xs-6">
+									<button type="button" class="btn btn-default">源代码：</button>
+								</div>
+								<div class="col-xs-6 text-right">
+									<!-- <button type="button" class="btn btn-success" onclick="preview(code)" id="submitBTN"> -->
+									<button type="button" class="btn btn-success" onclick="submitTryit()" id="submitBTN">
+										<span class="glyphicon glyphicon-send"></span> 点击运行
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="panel-body">
+						<textarea class="form-control" id="code" name="textareaCode">
+						</textarea>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<form class="form-inline">
+							<button type="button" class="btn btn-default">运行结果</button>
+						</form>
+					</div>
+					<div class="panel-body" id="iframewrapper"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+	window.onload = function() {
+		var resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+			ch = document.documentElement.clientHeight,
+			panelBody = document.querySelectorAll('.panel-body');
+
+		// 自适应panel-body的高度
+		for(var i = 0; i < panelBody.length; i++) {
+			panelBody[i].style.height = window.innerHeight*0.8 + 'px';
+		}
+		window.addEventListener(resizeEvt, function () {
+			for(var i = 0; i < panelBody.length; i++) {
+				panelBody[i].style.height = window.innerHeight*0.8 + 'px';
+			}
+		}, false);
+
+
+		// CodeMirror 应用
+		var mixedMode = {
+			name: "htmlmixed",
+			scriptTypes: [
+				{
+					matches: /\/x-handlebars-template|\/x-mustache/i,
+					mode: null
+				},
+				{
+					matches: /(text|application)\/(x-)?vb(a|script)/i,
+					mode: "vbscript"
+				}
+			]
+		};
+		var myCodeMirror = CodeMirror.fromTextArea(document.getElementById('code'), {
+			mode: mixedMode,
+			selectionPointer: true,
+			lineNumbers: false,
+			matchBrackets: true,
+			indentUnit: 4,
+			indentWithTabs: true
+		});
+		submitTryit();
+
+		function submitTryit() {
+			var text = myCodeMirror.getValue();
+			var patternHtml = /<html[^>]*>((.|[\n\r])*)<\/html>/im;
+			var patternHead = /<head[^>]*>((.|[\n\r])*)<\/head>/im;
+			var array_matches_head = patternHead.exec(text);
+			var patternBody = /<body[^>]*>((.|[\n\r])*)<\/body>/im;
+
+			var array_matches_body = patternBody.exec(text);
+			var basepath_flag = 1;
+			var basepath = '';
+			if(basepath_flag) {
+				basepath = '<base href="//www.runoob.com/try/demo_source/" target="_blank">';
+			}console.log(basepath_flag);
+			if(array_matches_head) {
+				text = text.replace('<head>', '<head>' + basepath );
+			} else if (patternHtml) {
+				text = text.replace('<html>', '<head>' + basepath + '</head>');
+			} else if (array_matches_body) {
+				text = text.replace('<body>', '<body>' + basepath );
+			} else {
+				text = basepath + text;
+			}
+			var iframe = document.createElement("iframe");
+			iframe.setAttribute("frameborder", "0");
+			iframe.setAttribute("id", "iframeResult");
+			document.getElementById("iframewrapper").innerHTML = "";
+			document.getElementById("iframewrapper").appendChild(iframe);
+
+			var iframeWin = (iframe.contentWindow) ? iframe.contentWindow : (iframe.contentDocument.document) ? iframe.contentDocument.document : iframe.contentDocument;
+			iframeWin.document.open();
+			iframeWin.document.write(text);
+			iframeWin.document.close();
+		}
+	}
+
+	function preview(obj) {
+		var TestWin = window.open('','',''); 	//打开一个窗口并赋给变量TestWin。
+		TestWin.opener = null; 		// 防止代码对页面修改
+		TestWin.document.write(obj.value); 		//向这个打开的窗口中写入代码code，这样就实现了运行代码功能。
+
+		console.log('TestWin = ');
+		console.log(TestWin);
+		TestWin.document.close();
+	}
+
+	
+	</script>
+</body>
+</html>

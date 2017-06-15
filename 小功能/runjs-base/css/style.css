@@ -1,0 +1,16 @@
+@charset "utf-8";
+/*runjs page*/
+body{background: #f2f2f2;}
+.container{margin: 0 auto;padding: 0 15px;width: 98%;}
+.CodeMirror{min-height: 100px;}
+#textareaCode{min-height: 100px;}
+#iframeResult{display: block;overflow: hidden;border: 0!important;min-width: 100px;width: 100%;min-height: 100px;background-color: #fff;}
+@media screen and (max-width: 768px){
+	#textareaCode{height: 100px;}
+	.CodeMirror{height: 100px;}
+	#iframeResult{height: 100px;}
+	.form-inline{padding: 6px 0 2px 0;}
+}
+
+/*index page*/
+.box iframe{width: 100%;height: 400px;}
