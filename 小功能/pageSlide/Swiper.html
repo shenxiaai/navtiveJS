@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,minimum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<script src="./PageSlide.js"></script>
+	<title>PageSlider Demo</title>
+	<style>
+		html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;}
+		.swipe{position: relative;width: 100%;height: 20rem;}
+		.pages{position: relative;width: 100%;height: 100%;}
+		.page {font-size:100px;position: absolute;top: 0;left: 0;width: 100%;height: 100%;overflow: hidden;
+			/*transform: translate3d(0px, 100%, 0px);-webkit-transform: translate3d(0px, 100%, 0px);-moz-transform: translate3d(0px, 100%, 0px);*/transition: transform .5s ease-out;-webkit-transition: -webkit-transform .5s ease-out;-moz-transition: -moz-transform .5s ease-out;}
+		.page img{width: 100%;height: 100%;}
+		/* the box animation */
+		.box{width:100px ;height:100px; background:black;}
+		.play .myAnimation{animation:move 1s ease 1 both ;-webkit-animation: move 1s ease 1 both ;}
+		@-webkit-keyframes move{
+			100%{
+				-webkit-transform:translate3d(150px,0,0);
+				transform:translate3d(150px,0,0);
+				-ms-transform: translate3d(150px,0,0);
+			}
+		}
+		.pagenation{position: absolute;left: 50%;bottom: 2rem;-webkit-transform: translateX(-50%);display: -webkit-box;--webkit-box-pack: justify;}
+		.pagenation span{margin: 0 .3rem;display: block;width: 1rem;height: 1rem;border-radius: 50%;background: grey;}
+		.pagenation span.active{background: green;}
+	</style>
+</head>
+
+<body>
+	<div class="swipe">
+		<div class="pages" id="pages">
+			<div class = "page page1"><img src="http://img.hb.aicdn.com/c8f625084dcb95fed218fae91dfedb56710a2ae85819d-HUWRi3"></div>
+			<div class = "page page2"><img src="http://img.hb.aicdn.com/4a29448fefab6cc91736ae459ada207f8d21ffc070665-yWs3Oi"></div>
+			<div class = "page page3"><img src="http://img.hb.aicdn.com/4a24fdf6619694ff5885b737e55e2d48565303ac3380b-C5DiRD"></div>
+			<div class = "page page3"><img src="http://img.hb.aicdn.com/900d7ae0042323ae05145d917a9873ba478eb7364f301-nl0BKA"></div>
+			<div class = "page page3"><img src="http://img.hb.aicdn.com/e1b01673e0c5e5d341cba07dff802d1989a8d20710777-wPGtkR"></div>
+		</div>
+		<div class="pagenation">
+			<span class="active"></span>
+			<span></span>
+			<span></span>
+			<span></span>
+			<span></span>
+		</div>
+	</div>
+
+	<script>
+		// 传参
+		var pageBox = document.getElementById('pages'),
+			pagenation = document.querySelector('.pagenation');
+
+		pageBox.addEventListener('touchmove', function(e) {
+			e.preventDefault();
+		})
+		var pages = new PageSlide(pageBox, 'X', pagenation, '300', {
+			tranSetionEnd: function() {
+				// console.log(this.current);
+			}
+		});
+	</script>
+</body>
+</html>

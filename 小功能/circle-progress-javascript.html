@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="format-detection" content="telephone=no">
+	<title>dashboard</title>
+	<style type="text/css">
+		html,body{margin: 0;padding: 0;}
+		.circle{position: relative;margin: 0 auto;width: 20rem;height: 20rem;line-height: 20rem;border-radius: 50%;background: lightblue;text-align: center;box-sizing: border-box;}
+		.circle .part{position: absolute;width: 10rem;height: 20rem;overflow: hidden;}
+		.circle .role{position: absolute;left: 0;top: 0;width: 20rem;height: 20rem;border-radius: 50%;clip: rect(0, 10rem, 20rem, 0);background: #fff;}
+		.circle .whiteBg{position: absolute;left: 50%;top: 50%;-webkit-transform: translate(-50%, -50%);background: #fff;width: 18rem;height: 18rem;border-radius: 50%;}
+		.circle p{position: relative;text-align: center;font-size: 2rem;color: #d9e6ea;}
+		.circle p em{font-size: 4rem;font-weight: bold;padding: 0 .5rem;color: #4f96ad;}
+	</style>
+</head>
+<body>
+	<!--
+	使用时，直接在页面上创建一个新对象即可。
+	var board = new Dashboard();	//创建一个圆形进度条
+	board.init({
+		percent: 70		//在这里设置百分比
+	});
+	-->
+	
+	<script>
+		window.onload = function () {
+			var board = new Dashboard();	//创建一个圆形进度条
+			board.init({
+				percent: 70		//在这里设置百分比
+			});
+		}
+
+		function Dashboard() {
+			this.settings = {
+				id: 'main',
+				cover: 'cover',
+				value: 'value',
+				percent: 100
+			};
+		}
+
+		Dashboard.prototype = {
+			constructor: Dashboard,
+			$: function (id) {
+				return document.getElementById(id);
+			},
+			init: function (opt) {
+				for(var attr in this.settings){
+					if(opt.hasOwnProperty(attr)){
+						this.settings[attr] = opt[attr];
+					}
+				}
+
+				var circle 	= document.createElement('div'),
+					cover 	= document.createElement('div'),
+					whiteBg = document.createElement('div'),
+					tip 	= document.createElement('p'),
+					tipEm 	= document.createElement('em');
+				circle.className = 'circle';
+				cover.className = 'cover';
+				cover.id = 'cover';
+				whiteBg.className = 'whiteBg';
+				tipEm.id = 'value';
+				tip.innerHTML = '%';
+				tip.insertBefore(tipEm, tip.childNodes[0]);
+				circle.appendChild(cover);
+				circle.appendChild(whiteBg);
+				circle.appendChild(tip);
+				document.body.appendChild(circle);
+
+				this.cover = this.$(this.settings.cover);
+				this.valBox = this.$(this.settings.value);
+				this.valPlus(this.valBox, this.cover);
+			},
+			valPlus: function (obj, cove) {
+				var This = this;
+				var w = 0;
+				This.timer = setInterval(function () {
+					if(w < This.settings.percent){
+						w++;
+						cove.innerHTML = w < 50 ? '<div class="role"></div><div class="role" style="-webkit-transform: rotate(' + (180/50*w - 180) + 'deg);"></div>' : '<div class="part"><div class="role" style="-webkit-transform: rotate(' + (180 + 180/50*w) + 'deg);"></div></div>';
+						obj.innerHTML = w;
+					}else{
+						clearInterval(This.timer);
+					}
+				}, 30);
+			}
+		};
+	</script>
+</body>
+</html>

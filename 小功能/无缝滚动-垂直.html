@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+	<title>无缝滚动</title>
+	<link rel="stylesheet" type="text/css" href="../common.css">
+	<style type="text/css">
+		html,body,div,p,h1,h2,h3,h4,h5,h6,blockquote,ul,ol,li,table,th,td,span,img,dl,dd,dt,input,textarea,button{border:medium none;padding:0;margin:0;}/*清除内外边距*/
+		body,textarea,button,input,select{font:12px/1.5 Verdana, Geneva, sans-serif,'宋体','微软雅黑';color:#333;}/*设置字体*/
+		h1,h2,h3,h4,h5,h6{font-size:100%;}
+		em{font-style:normal;}
+		ul,ol{list-style:none;}/*设置列表*/
+		th,td{border-collapse:collapse;border-spacing:0;}/*设置表格*/
+		img{border:none;}/*设置图片*/
+		body{font-size: 20px;}
+		button{margin-top: 160px;display: block;float: left;width: .5rem;height: 1rem;border: 1px solid #ddd;border-radius: 8px;background: #ead234;color: #fff;}
+		.gallery{float: left;overflow: hidden;margin: 1rem auto;position: relative;;width: 880px;height: 328px;background: lightskyblue;}
+		.gallery ul{position: absolute;left: 0;top: 0;}
+		.gallery li{float: left;width: 220px;height: 328px;}
+	</style>
+	<script type="text/javascript">
+		window.onload = function() {
+			var gallery = document.getElementById('gallery'),
+				oUl = gallery.getElementsByTagName('ul')[0],
+				aLi = oUl.getElementsByTagName('li'),
+				goLeft = document.getElementById('goLeft'),
+				goRight = document.getElementById('goRight'),
+				timer;
+
+			oUl.innerHTML = oUl.innerHTML + oUl.innerHTML;
+			oUl.style.width = aLi[0].offsetWidth * aLi.length + 'px';
+
+			function move(){
+				if(oUl.offsetLeft < -oUl.offsetWidth/2){
+					oUl.style.left = '0';
+				}
+				if(oUl.offsetLeft > 0){
+					oUl.style.left = -oUl.offsetWidth/2 + 'px';
+				}
+				oUl.style.left = oUl.offsetLeft - 2 + 'px';
+			}
+
+			timer = setInterval(move, 10);
+
+			oUl.onmouseover = function(){
+				clearInterval(timer);
+			}
+
+			oUl.onmouseout = function(){
+				timer = setInterval(move, 10);
+			}
+		}
+	</script>
+</head>
+<body>
+	<button id="goLeft" class="goLeft">&lt;</button>
+	<div class="gallery" id="gallery">
+		<ul>
+			<li><img src="../../../URL/unit develop/scrollShowImg/images/a1.jpg" width="100%" height="100%"></li>
+			<li><img src="../../../URL/unit develop/scrollShowImg/images/a2.jpg" width="100%" height="100%"></li>
+			<li><img src="../../../URL/unit develop/scrollShowImg/images/a3.jpg" width="100%" height="100%"></li>
+			<li><img src="../../../URL/unit develop/scrollShowImg/images/a4.jpg" width="100%" height="100%"></li>
+		</ul>
+	</div>
+	<button id="goRight" class="goRight">&gt;</button>
+</body>
+</html>
