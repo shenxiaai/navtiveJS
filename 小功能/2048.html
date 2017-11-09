@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="format-detection" content="telephone=no">
+	<title>2048</title>
+	<style>
+		html, body, p{margin: 0;padding: 0;}
+		.sumBox{margin: 0;padding: 10px 20px;height: 35px;line-height: 1;text-align: right;font-size: 20px;font-weight: bold;box-sizing: border-box;}
+		.box{width: 100%;}
+		.box p{float: left;display: inline-block;text-align: center;background: orange;font-size: 36px;font-weight: bold;color: #fff;border: 2px solid #fff;box-sizing: border-box;}
+	</style>
+</head>
+<body>
+	<h5 id="sumBox" class="sumBox">0</h5>
+	<div class="box" id="box">
+		<p id="squr0"></p>
+		<p id="squr1"></p>
+		<p id="squr2"></p>
+		<p id="squr3"></p>
+		<p id="squr4"></p>
+		<p id="squr5"></p>
+		<p id="squr6"></p>
+		<p id="squr7"></p>
+		<p id="squr8"></p>
+		<p id="squr9"></p>
+		<p id="squr10"></p>
+		<p id="squr11"></p>
+		<p id="squr12"></p>
+		<p id="squr13"></p>
+		<p id="squr14"></p>
+		<p id="squr15"></p>
+	</div>
+
+	<script>
+		window.onload = function () {
+			var game = new Game();		//创建实例
+			game.init({
+				box: 'box',
+				gameTime: 5000
+			});
+		}
+
+
+		function Game() {
+			this.settings = {
+				box: '',
+				sumBox: 'sumBox',
+				gameTime: 1000
+			};
+		}
+		Game.prototype = {
+			constructor: Game,
+			$: function (id) {
+				return document.getElementById(id);
+			},
+			init (opt) {
+				for(var attr in this.settings){
+					if(opt.hasOwnProperty(attr)){
+						this.settings[attr] = opt[attr];
+					}
+				}
+
+				var data = [];
+					startPointX = 0,
+					startPointY = 0,
+					movePointX = 0,
+					movePointY = 0,
+					x = 0,
+					y = 0,
+					cW = document.documentElement.clientWidth,
+					cH = document.documentElement.clientHeight,
+					sum = 0,	// 总得分
+					boxP = this.$(this.settings.box).getElementsByTagName('p'),
+					sumBox = this.$(this.settings.sumBox),
+					This = this;
+
+				for(var x = 0; x < boxP.length; x++) {
+					boxP[x].style.lineHeight = boxP[x].style.height = boxP[x].style.width = Math.floor((cW-5)/4) + 'px';
+				}
+
+				for(var i = 0; i < 16; i++) {
+					data.push(0);
+				}
+
+				This.random2Data(data);
+				This.random2Data(data);
+				This.layout(boxP, data);
+
+				document.addEventListener('touchstart', function(event) {
+					startPointX = event.targetTouches[0].clientX;
+					startPointY = event.targetTouches[0].clientY;
+				});
+				document.addEventListener('touchmove', function(event) {
+					movePointX = event.targetTouches[0].clientX;
+					movePointY = event.targetTouches[0].clientY;
+				});
+				document.addEventListener('touchend', function (event) {
+					x = movePointX - startPointX;
+					y = movePointY - startPointY;
+					if(x < 0) {
+						if(y < 0) {
+							if(Math.abs(x) > Math.abs(y)) {
+								console.log('左');
+								This.move([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]], boxP, data);
+							}else{
+								console.log('上');
+								This.move([[0,4,8,12], [1,5,9,13], [2,6,10,14], [3,7,11,15]], boxP, data);
+							}
+						}else{
+							if(Math.abs(x) > Math.abs(y)){
+								console.log('左');
+								This.move([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]], boxP, data);
+							}else{
+								console.log('下');
+								This.move([[12,8,4,0], [13,9,5,1], [14,10,6,2],[15,11,7,3]], boxP, data);
+							}
+						}
+					}else{
+						if(y < 0) {
+							if(Math.abs(x) > Math.abs(y)){
+								console.log('右');
+								This.move([[3,2,1,0],[7,6,5,4],[11,10,9,8],[15,14,13,12]], boxP, data);
+							}else{
+								console.log('上');
+								This.move([[0,4,8,12], [1,5,9,13], [2,6,10,14], [3,7,11,15]], boxP, data);
+							}
+						}else{
+							if(Math.abs(x) > Math.abs(y)){
+								console.log('右');
+								This.move([[3,2,1,0],[7,6,5,4],[11,10,9,8],[15,14,13,12]], boxP, data);
+							}else{
+								console.log('下');
+								This.move([[12,8,4,0], [13,9,5,1], [14,10,6,2],[15,11,7,3]], boxP, data);
+							}
+						}
+					}
+					This.random2Data(data);
+					This.layout(boxP, data);
+				});
+			},
+			layout (_boxP, _data) {
+				for(var x = 0; x < _boxP.length; x++) {
+					_boxP[x].innerHTML = !_data[x] ? '' : _data[x];
+				}
+				sumBox.innerHTML = sum;
+			},
+			random2Data (_data) {
+				var temp = [],
+					count = 0,
+					randomInd = 0,
+					randomVal = '';
+				for(var y = 0; y < _data.length; y++) {
+					if(_data[y] == 0) {
+						temp.push(count);
+					}
+					count++;
+				}
+				randomInd = parseInt(Math.random() * temp.length);
+				randomVal = temp[randomInd];
+				_data[randomVal] = 2;
+			},
+			move (_doubleArr, _boxP, _data) {		// 需要遍历的坐标二维数组
+				for(var a = 0; a < 4; a++){
+					var lineArr = _doubleArr[a];	// 获取坐标二维数组中某一个 坐标一维数组元素
+					for(var b = 0; b < 4; b++) {		// 遍历坐标一位数组的每个元素
+						var curr = lineArr[b],			// 当前元素
+							next1 = lineArr[b+1],		// 当前元素的 next 一位
+							next2 = lineArr[b+2],		// 当前元素的 next 两位
+							next3 = lineArr[b+3];		// 当前元素的 next 三位
+						if(_data[curr] == 0) {		// 如果当前元素(_data[curr]) 为0
+							if(_data[next1]) {
+								_data[curr] = _data[next1];
+								_data[next1] = 0;
+							}else if(_data[next2]) {
+								_data[curr] = _data[next2];
+								_data[next2] = 0;
+							}else if(_data[next3]) {
+								_data[curr] = _data[next3];
+								_data[next3] = 0;
+							}
+						}else{		// 如果当前元素(curr) 有值
+							if(_data[curr] == _data[next1]) {
+								sum += _data[curr];
+								_data[curr] *= 2;
+								_data[next1] = 0;
+							}
+						}
+					}
+
+					for(var b = 0; b < 4; b++) {		// 遍历坐标一位数组的每个元素
+						var curr = lineArr[b],			// 当前元素
+							next1 = lineArr[b+1],		// 当前元素的 next 一位
+							next2 = lineArr[b+2],		// 当前元素的 next 两位
+							next3 = lineArr[b+3];		// 当前元素的 next 三位
+						if(_data[curr] == 0) {		// 如果当前元素(_data[curr]) 为0
+							if(_data[next1]) {
+								_data[curr] = _data[next1];
+								_data[next1] = 0;
+							}else if(_data[next2]) {
+								_data[curr] = _data[next2];
+								_data[next2] = 0;
+							}else if(_data[next3]) {
+								_data[curr] = _data[next3];
+								_data[next3] = 0;
+							}
+						}else{		// 如果当前元素(curr) 有值
+							if(_data[curr] == _data[next1]) {
+								sum += _data[curr];
+								_data[curr] *= 2;
+								_data[next1] = 0;
+							}
+						}
+					}
+				}
+			}
+		};
+	</script>
+</body>
+</html>
