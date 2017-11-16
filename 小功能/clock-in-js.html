@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+	<title>clock</title>
+	<style>
+        html, body{
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+		.circle{
+            position: relative;
+            margin: 0 auto;
+            margin-top: 20px;
+            background: #c3c3c3;
+            border-radius: 50%;
+            width: 100%;
+            height: 100%;
+        }
+        .scale{
+            position: absolute;
+            width: 20px;
+            height: 4px;
+            background: #444;
+        }
+        .hand{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform-origin: 0 center 0;
+            width: 0;
+            height: 0;
+            border-top: 4px solid transparent;
+            border-left: 80px solid #e4e4e4;
+            border-bottom: 4px solid transparent;
+        }
+        .minuteHand{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0 center 0;
+            width: 0;
+            height: 0;
+            border-top: 4px solid transparent;
+            border-left: 120px solid #f2f2f2;
+            border-bottom: 4px solid transparent;
+        }
+        .secondHand{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform-origin: 0 center 0;
+            width: 0;
+            height: 0;
+            border-top: 4px solid transparent;
+            border-left: 160px solid #fff;
+            border-bottom: 4px solid transparent;
+        }
+        .cover{
+            position: absolute;
+            left: calc(50% - 10px);
+            top: calc(50% - 10px);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #444;
+        }
+	</style>
+</head>
+<body>
+	
+	<script>
+		window.onload = function() {
+            circle.init();
+		};
+		var circle = {
+            init: function () {
+                var circle = document.createElement('div'),
+					cW = document.documentElement.clientWidth,
+                    cH = document.documentElement.clientHeight,
+                    wildWidth = 0,
+                    hand = document.createElement('div'),       // 时针
+                    minuteHand = document.createElement('div'),     // 分针
+                    secondHand = document.createElement('div'),     // 秒针
+                    time = '';      // 当前时间
+
+                this.layout(circle, cW, hand, minuteHand, secondHand);
+                this.check1Second(time, hand, minuteHand, secondHand);
+
+            },
+            check1Second: function (time, hand, minuteHand, secondHand) {
+                time = this.getTime();
+                setTimeout(() => {
+                    this.rotation(time, hand, minuteHand, secondHand);
+                    this.check1Second(time, hand, minuteHand, secondHand);
+                }, 1000);
+            },
+            getTime: function () {
+                var date = new Date(),
+                    hour = '',
+                    minute = '',
+                    second = '';
+                hour = date.getHours(),
+                minute = date.getMinutes(),
+                second = date.getSeconds();
+                return {
+                    'hour': hour,
+                    'minute': minute,
+                    'second': second
+                };
+            },
+			layout: function (circle, cW, hand, minuteHand, secondHand) {
+                var cover = document.createElement('div');      // 中心遮盖点
+
+                circle.id = circle.className = 'circle';
+                wildWidth = cW - cW%2;      // 对clientWidth取偶数
+                circle.style.height = circle.style.width = wildWidth + 'px';
+                for(var a = 0; a < 12; a++) {   // 生成12个刻度
+                    var ele = document.createElement('div');
+                    ele.className = 'scale';
+                    ele.style.top = '50%';
+                    ele.style.left = cW - 21 + 'px';
+                    ele.style.transformOrigin = -cW/2 + 21 + 'px';
+                    ele.style.transform = 'rotate(' + (30*a)+ 'deg)';
+                    circle.appendChild(ele);
+                }
+                hand.className = 'hand';    // 时针
+                circle.appendChild(hand);
+
+                minuteHand.className = 'minuteHand';      // 分针
+                circle.appendChild(minuteHand);
+
+                secondHand.className = 'secondHand';      // 秒针
+                circle.appendChild(secondHand);
+
+                cover.className = 'cover';      // 遮盖点
+                circle.appendChild(cover);
+
+                document.body.appendChild(circle);
+            },
+            rotation: function (time, hand, minuteHand, secondHand) {
+                hand.style.transform = 'rotate(' + (30 * time.hour - 90) + 'deg)';
+                minuteHand.style.transform = 'rotate(' + (6 * time.minute - 90) + 'deg)';
+                secondHand.style.transform = 'rotate(' + (6 * time.second - 90) + 'deg)';
+            }
+		};
+	</script>
+</body>
+</html>
